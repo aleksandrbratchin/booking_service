@@ -10,7 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.bratchin.booking_service.dto.BookingDTO;
+import ru.bratchin.booking_service.dto.BookingRequestDTO;
+import ru.bratchin.booking_service.dto.BookingResponseDTO;
 import ru.bratchin.booking_service.service.BookingService;
 
 import java.time.LocalDateTime;
@@ -30,12 +31,12 @@ public class BookingController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Список бронирований за указанный период времени")
     })
-    public ResponseEntity<List<BookingDTO>> getBookingsByDateRange(
+    public ResponseEntity<List<BookingResponseDTO>> getBookingsByDateRange(
             @Parameter(description = "Дата и время начала периода для поиска", required = true)
             @RequestParam LocalDateTime startDate,
             @Parameter(description = "Дата и время окончания периода для поиска", required = true)
             @RequestParam LocalDateTime endDate) {
-        List<BookingDTO> bookings = bookingService.getBookingsByDateRange(startDate, endDate);
+        List<BookingResponseDTO> bookings = bookingService.getBookingsByDateRange(startDate, endDate);
         return ResponseEntity.ok(bookings);
     }
 
@@ -44,7 +45,7 @@ public class BookingController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Список всех бронирований")
     })
-    public ResponseEntity<List<BookingDTO>> getAllBookings() {
+    public ResponseEntity<List<BookingResponseDTO>> getAllBookings() {
         return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
@@ -54,9 +55,9 @@ public class BookingController {
             @ApiResponse(responseCode = "200", description = "Бронирование найдено"),
             @ApiResponse(responseCode = "404", description = "Бронирование не найдено")
     })
-    public ResponseEntity<BookingDTO> getBookingById(@PathVariable UUID id) {
-        BookingDTO bookingDTO = bookingService.getBookingById(id);
-        return bookingDTO != null ? ResponseEntity.ok(bookingDTO) : ResponseEntity.notFound().build();
+    public ResponseEntity<BookingResponseDTO> getBookingById(@PathVariable UUID id) {
+        BookingResponseDTO bookingRequestDTO = bookingService.getBookingById(id);
+        return bookingRequestDTO != null ? ResponseEntity.ok(bookingRequestDTO) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
@@ -64,8 +65,8 @@ public class BookingController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Бронирование создано")
     })
-    public ResponseEntity<BookingDTO> createBooking(@RequestBody BookingDTO bookingDTO) {
-        BookingDTO createdBooking = bookingService.createBooking(bookingDTO);
+    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody BookingRequestDTO bookingRequestDTO) {
+        BookingResponseDTO createdBooking = bookingService.createBooking(bookingRequestDTO);
         return ResponseEntity.status(201).body(createdBooking);
     }
 

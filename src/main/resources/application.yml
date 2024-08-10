@@ -17,3 +17,8 @@ springdoc:
   swagger-ui:
     path: /swagger
     tryItOutEnabled: true
+resttemplate:
+  url:
+    customer: http://localhost/customers
+    room: http://localhost/rooms
+    hotel: http://localhost/hotels

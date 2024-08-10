@@ -2,7 +2,8 @@ package ru.bratchin.booking_service.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.bratchin.booking_service.dto.BookingDTO;
+import ru.bratchin.booking_service.dto.BookingRequestDTO;
+import ru.bratchin.booking_service.dto.BookingResponseDTO;
 import ru.bratchin.booking_service.entity.Booking;
 import ru.bratchin.booking_service.mapper.BookingMapper;
 import ru.bratchin.booking_service.repository.BookingRepository;
@@ -21,37 +22,37 @@ public class BookingService {
 
     private final BookingMapper bookingMapper;
 
-    public List<BookingDTO> getBookingsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+    public List<BookingResponseDTO> getBookingsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         return bookingRepository.findByDateRange(startDate, endDate).stream()
                 .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<BookingDTO> getAllBookings() {
+    public List<BookingResponseDTO> getAllBookings() {
         return bookingRepository.findAll().stream()
                 .map(bookingMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public BookingDTO getBookingById(UUID id) {
+    public BookingResponseDTO getBookingById(UUID id) {
         return bookingRepository.findById(id)
                 .map(bookingMapper::toDTO)
                 .orElse(null);
     }
 
-    public BookingDTO createBooking(BookingDTO bookingDTO) {
-        if (isRoomBooked(bookingDTO.roomId(), bookingDTO.startDate(), bookingDTO.endDate())) {
+    public BookingResponseDTO createBooking(BookingRequestDTO bookingRequestDTO) {
+        if (isRoomBooked(bookingRequestDTO.roomId(), bookingRequestDTO.startDate(), bookingRequestDTO.endDate())) {
             throw new IllegalArgumentException("The room is already booked for the given period.");
         }
-        Booking booking = bookingMapper.toEntity(bookingDTO);
+        Booking booking = bookingMapper.toEntity(bookingRequestDTO);
         return bookingMapper.toDTO(bookingRepository.save(booking));
     }
 
-    public BookingDTO updateBooking(UUID id, BookingDTO bookingDTO) {
+    public BookingResponseDTO updateBooking(UUID id, BookingRequestDTO bookingRequestDTO) {
         if (!bookingRepository.existsById(id)) {
             return null;
         }
-        Booking booking = bookingMapper.toEntity(bookingDTO);
+        Booking booking = bookingMapper.toEntity(bookingRequestDTO);
         booking.setId(id);
         return bookingMapper.toDTO(bookingRepository.save(booking));
     }

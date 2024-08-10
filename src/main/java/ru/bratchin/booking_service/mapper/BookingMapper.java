@@ -1,14 +1,24 @@
 package ru.bratchin.booking_service.mapper;
 
-
 import org.mapstruct.Mapper;
-import ru.bratchin.booking_service.dto.BookingDTO;
+import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.bratchin.booking_service.dto.BookingRequestDTO;
+import ru.bratchin.booking_service.dto.BookingResponseDTO;
 import ru.bratchin.booking_service.entity.Booking;
+import ru.bratchin.booking_service.service.RestTemplateService;
 
 @Mapper(componentModel = "spring")
-public interface BookingMapper {
+public abstract class BookingMapper {
 
-    BookingDTO toDTO(Booking booking);
+    @Autowired
+    protected RestTemplateService restTemplateService;
 
-    Booking toEntity(BookingDTO bookingDTO);
+    @Mapping(target = "room", expression = "java(restTemplateService.getRoomById(booking.getRoomId()))")
+    @Mapping(target = "hotel", expression = "java(restTemplateService.getHotelById(booking.getHotelId()))")
+    @Mapping(target = "customer", expression = "java(restTemplateService.getCustomerById(booking.getCustomerId()))")
+    public abstract BookingResponseDTO toDTO(Booking booking);
+
+    public abstract Booking toEntity(BookingRequestDTO bookingDTO);
+
 }

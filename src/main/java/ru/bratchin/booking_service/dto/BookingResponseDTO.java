@@ -1,13 +1,13 @@
 package ru.bratchin.booking_service.dto;
 
-import java.util.UUID;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-public record BookingDTO(
+public record BookingResponseDTO(
         UUID id,
-        UUID hotelId,
-        UUID roomId,
-        UUID customerId,
+        HotelDTO hotel,
+        RoomDTO room,
+        CustomerDTO customer,
         LocalDateTime startDate,
         LocalDateTime endDate
 ) {}
