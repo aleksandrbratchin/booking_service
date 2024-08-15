@@ -21,7 +21,8 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
     @Query("SELECT b FROM Booking b WHERE b.roomId = :roomId AND " +
             "((:startDate BETWEEN b.startDate AND b.endDate) OR " +
-            "(:endDate BETWEEN b.startDate AND b.endDate))")
+            "(:endDate BETWEEN b.startDate AND b.endDate) OR " +
+            "(b.startDate <= :startDate AND b.endDate >= :endDate))")
     Optional<Booking> findOverlappingBooking(@Param("roomId") UUID roomId,
                                               @Param("startDate") LocalDateTime startDate,
                                               @Param("endDate") LocalDateTime endDate);

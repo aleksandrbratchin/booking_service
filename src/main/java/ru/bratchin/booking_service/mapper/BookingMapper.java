@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.bratchin.booking_service.dto.BookingRequestDTO;
 import ru.bratchin.booking_service.dto.BookingResponseDTO;
 import ru.bratchin.booking_service.entity.Booking;
-import ru.bratchin.booking_service.service.RestTemplateService;
+import ru.bratchin.booking_service.service.api.RestTemplateService;
 
 @Mapper(componentModel = "spring")
 public abstract class BookingMapper {

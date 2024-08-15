@@ -19,6 +19,6 @@ springdoc:
     tryItOutEnabled: true
 resttemplate:
   url:
-    customer: http://localhost/customers
+    customer: http://localhost:8082/customers
     room: http://localhost/rooms
     hotel: http://localhost/hotels

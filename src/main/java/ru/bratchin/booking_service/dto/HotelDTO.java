@@ -6,7 +6,6 @@ import java.util.UUID;
 public record HotelDTO(
         UUID id,
         String name,
-        String address,
-        List<RoomDTO> rooms
+        String address
 ) {
 }
