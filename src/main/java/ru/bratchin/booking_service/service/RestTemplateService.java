@@ -1,7 +1,9 @@
 package ru.bratchin.booking_service.service;
 
-import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.bratchin.booking_service.dto.CustomerDTO;
 import ru.bratchin.booking_service.dto.HotelDTO;
@@ -11,17 +13,26 @@ import ru.bratchin.booking_service.service.api.RestTemplateAbstractService;
 import java.util.UUID;
 
 @Service
-//@Profile("dev")
-@Profile("prod")
-public class RestTemplateDevService extends RestTemplateAbstractService {
+public class RestTemplateService extends RestTemplateAbstractService {
 
-    public RestTemplateDevService(RestTemplate restTemplate) {
+    public RestTemplateService(RestTemplate restTemplate) {
         super(restTemplate);
     }
 
     @Override
     public CustomerDTO getCustomerById(UUID uuid) {
-        return new CustomerDTO(uuid, "firstName", "lastName", "test@mail.ru");
+        String url = customerURL + "/" + uuid.toString();
+        try {
+            return restTemplate.getForObject(url, CustomerDTO.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            } else {
+                throw e;
+            }
+        } catch (RestClientException e) {
+            throw e;
+        }
     }
 
     @Override

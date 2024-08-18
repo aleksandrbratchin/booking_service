@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.bratchin.booking_service.dto.BookingCreateDTO;
 import ru.bratchin.booking_service.dto.BookingRequestDTO;
 import ru.bratchin.booking_service.dto.BookingResponseDTO;
 import ru.bratchin.booking_service.service.BookingService;
@@ -65,8 +66,8 @@ public class BookingController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Бронирование создано")
     })
-    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody BookingRequestDTO bookingRequestDTO) {
-        BookingResponseDTO createdBooking = bookingService.createBooking(bookingRequestDTO);
+    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody BookingCreateDTO bookingCreateDTO) {
+        BookingResponseDTO createdBooking = bookingService.createBooking(bookingCreateDTO);
         return ResponseEntity.status(201).body(createdBooking);
     }
 

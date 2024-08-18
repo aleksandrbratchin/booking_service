@@ -2,6 +2,7 @@ package ru.bratchin.booking_service.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.bratchin.booking_service.dto.BookingCreateDTO;
 import ru.bratchin.booking_service.dto.BookingRequestDTO;
 import ru.bratchin.booking_service.dto.BookingResponseDTO;
 import ru.bratchin.booking_service.entity.Booking;
@@ -40,11 +41,11 @@ public class BookingService {
                 .orElse(null);
     }
 
-    public BookingResponseDTO createBooking(BookingRequestDTO bookingRequestDTO) {
-        if (isRoomBooked(bookingRequestDTO.roomId(), bookingRequestDTO.startDate(), bookingRequestDTO.endDate())) {
+    public BookingResponseDTO createBooking(BookingCreateDTO bookingCreateDTO) {
+        if (isRoomBooked(bookingCreateDTO.roomId(), bookingCreateDTO.startDate(), bookingCreateDTO.endDate())) {
             throw new IllegalArgumentException("The room is already booked for the given period.");
         }
-        Booking booking = bookingMapper.toEntity(bookingRequestDTO);
+        Booking booking = bookingMapper.toEntity(bookingCreateDTO);
         return bookingMapper.toDTO(bookingRepository.save(booking));
     }
 

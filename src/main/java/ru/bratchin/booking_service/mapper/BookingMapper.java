@@ -3,6 +3,7 @@ package ru.bratchin.booking_service.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.bratchin.booking_service.dto.BookingCreateDTO;
 import ru.bratchin.booking_service.dto.BookingRequestDTO;
 import ru.bratchin.booking_service.dto.BookingResponseDTO;
 import ru.bratchin.booking_service.entity.Booking;
@@ -20,5 +21,7 @@ public abstract class BookingMapper {
     public abstract BookingResponseDTO toDTO(Booking booking);
 
     public abstract Booking toEntity(BookingRequestDTO bookingDTO);
+
+    public abstract Booking toEntity(BookingCreateDTO bookingDTO);
 
 }
