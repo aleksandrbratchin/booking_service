@@ -37,11 +37,34 @@ public class RestTemplateService extends RestTemplateAbstractService {
 
     @Override
     public RoomDTO getRoomById(UUID uuid) {
-        return new RoomDTO(uuid, "15", "testRoom", 100D);
+        //return new RoomDTO(uuid, "15", "testRoom", 100D);
+        String url = roomURL + "/" + uuid.toString();
+        try {
+            return restTemplate.getForObject(url, RoomDTO.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            } else {
+                throw e;
+            }
+        } catch (RestClientException e) {
+            throw e;
+        }
     }
 
     @Override
     public HotelDTO getHotelById(UUID uuid) {
-        return new HotelDTO(uuid, "nameHotel", "adress");
+        String url = hotelURL + "/" + uuid.toString();
+        try {
+            return restTemplate.getForObject(url, HotelDTO.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return null;
+            } else {
+                throw e;
+            }
+        } catch (RestClientException e) {
+            throw e;
+        }
     }
 }

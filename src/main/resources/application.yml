@@ -20,5 +20,5 @@ springdoc:
 resttemplate:
   url:
     customer: http://app-customers:8082/customers
-    room: http://localhost/rooms
-    hotel: http://localhost/hotels
+    room: http://app-hotel:8083/hotels/rooms
+    hotel: http://app-hotel:8083/hotels
