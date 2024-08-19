@@ -1,5 +1,17 @@
 package ru.bratchin.booking_service.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,16 +23,6 @@ import ru.bratchin.booking_service.dto.BookingResponseDTO;
 import ru.bratchin.booking_service.entity.Booking;
 import ru.bratchin.booking_service.mapper.BookingMapper;
 import ru.bratchin.booking_service.repository.BookingRepository;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class BookingServiceTest {
 
@@ -45,9 +47,11 @@ class BookingServiceTest {
         bookingId = UUID.randomUUID();
         booking = new Booking(bookingId, UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
             LocalDateTime.now(), LocalDateTime.now().plusDays(1));
-        bookingCreateDTO = new BookingCreateDTO(booking.getHotelId(), booking.getRoomId(), booking.getCustomerId(),
+        bookingCreateDTO = new BookingCreateDTO(booking.getHotelId(), booking.getRoomId(),
+            booking.getCustomerId(),
             booking.getStartDate(), booking.getEndDate());
-        bookingRequestDTO = new BookingRequestDTO(bookingId, booking.getHotelId(), booking.getRoomId(),
+        bookingRequestDTO = new BookingRequestDTO(bookingId, booking.getHotelId(),
+            booking.getRoomId(),
             booking.getCustomerId(), booking.getStartDate(), booking.getEndDate());
         bookingResponseDTO = new BookingResponseDTO(bookingId, null, null, null,
             booking.getStartDate(), booking.getEndDate());
@@ -111,7 +115,8 @@ class BookingServiceTest {
 
     @Test
     void createBooking_ThrowsExceptionIfRoomIsBooked() {
-        when(bookingRepository.findOverlappingBooking(any(UUID.class), any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(bookingRepository.findOverlappingBooking(any(UUID.class), any(LocalDateTime.class),
+            any(LocalDateTime.class)))
             .thenReturn(Optional.of(booking));
 
         assertThatThrownBy(() -> bookingService.createBooking(bookingCreateDTO))
@@ -121,23 +126,18 @@ class BookingServiceTest {
 
     @Test
     void updateBooking_ReturnsUpdatedBooking() {
-        when(bookingRepository.existsById(any(UUID.class))).thenReturn(true);
+        when(bookingRepository.findById(any(UUID.class))).thenReturn(Optional.of(booking));
         when(bookingMapper.toEntity(any(BookingRequestDTO.class))).thenReturn(booking);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
         when(bookingMapper.toDTO(any(Booking.class))).thenReturn(bookingResponseDTO);
 
-        BookingResponseDTO updatedBooking = bookingService.updateBooking(bookingId, bookingRequestDTO);
+        BookingResponseDTO updatedBooking = bookingService.updateBooking(bookingId,
+            bookingRequestDTO);
 
         assertThat(updatedBooking).isEqualTo(bookingResponseDTO);
-    }
 
-    @Test
-    void updateBooking_ReturnsNullIfBookingNotFound() {
-        when(bookingRepository.existsById(any(UUID.class))).thenReturn(false);
-
-        BookingResponseDTO updatedBooking = bookingService.updateBooking(bookingId, bookingRequestDTO);
-
-        assertThat(updatedBooking).isNull();
+        verify(bookingRepository, times(1)).findById(bookingId);
+        verify(bookingRepository, times(1)).save(any(Booking.class));
     }
 
     @Test
@@ -151,20 +151,24 @@ class BookingServiceTest {
 
     @Test
     void isRoomBooked_ReturnsTrueIfRoomIsBooked() {
-        when(bookingRepository.findOverlappingBooking(any(UUID.class), any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(bookingRepository.findOverlappingBooking(any(UUID.class), any(LocalDateTime.class),
+            any(LocalDateTime.class)))
             .thenReturn(Optional.of(booking));
 
-        boolean result = bookingService.isRoomBooked(booking.getRoomId(), booking.getStartDate(), booking.getEndDate());
+        boolean result = bookingService.isRoomBooked(booking.getRoomId(), booking.getStartDate(),
+            booking.getEndDate());
 
         assertThat(result).isTrue();
     }
 
     @Test
     void isRoomBooked_ReturnsFalseIfRoomIsNotBooked() {
-        when(bookingRepository.findOverlappingBooking(any(UUID.class), any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(bookingRepository.findOverlappingBooking(any(UUID.class), any(LocalDateTime.class),
+            any(LocalDateTime.class)))
             .thenReturn(Optional.empty());
 
-        boolean result = bookingService.isRoomBooked(booking.getRoomId(), booking.getStartDate(), booking.getEndDate());
+        boolean result = bookingService.isRoomBooked(booking.getRoomId(), booking.getStartDate(),
+            booking.getEndDate());
 
         assertThat(result).isFalse();
     }

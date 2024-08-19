@@ -67,8 +67,12 @@ public class BookingController {
             @ApiResponse(responseCode = "201", description = "Бронирование создано")
     })
     public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody BookingCreateDTO bookingCreateDTO) {
-        BookingResponseDTO createdBooking = bookingService.createBooking(bookingCreateDTO);
-        return ResponseEntity.status(201).body(createdBooking);
+        try {
+            BookingResponseDTO createdBooking = bookingService.createBooking(bookingCreateDTO);
+            return ResponseEntity.status(201).body(createdBooking);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -100,6 +104,25 @@ public class BookingController {
         try {
             boolean isBooked = bookingService.isRoomBooked(roomId, startDate, endDate);
             return ResponseEntity.ok(isBooked);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Обновить бронирование", description = "Обновляет существующее бронирование по заданному ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Бронирование успешно обновлено"),
+        @ApiResponse(responseCode = "404", description = "Бронирование с заданным ID не найдено"),
+        @ApiResponse(responseCode = "400", description = "Некорректные входные данные")
+    })
+    public ResponseEntity<BookingResponseDTO> updateBooking(
+        @Parameter(description = "UUID бронирования для обновления", required = true)
+        @PathVariable UUID id,
+        @RequestBody BookingRequestDTO bookingRequestDTO) {
+        try {
+            BookingResponseDTO updatedBooking = bookingService.updateBooking(id, bookingRequestDTO);
+            return updatedBooking != null ? ResponseEntity.ok(updatedBooking) : ResponseEntity.notFound().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

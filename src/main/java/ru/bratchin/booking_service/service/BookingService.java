@@ -50,12 +50,14 @@ public class BookingService {
     }
 
     public BookingResponseDTO updateBooking(UUID id, BookingRequestDTO bookingRequestDTO) {
-        if (!bookingRepository.existsById(id)) {
-            return null;
-        }
+        Booking booking1 = bookingRepository.findById(id).orElseThrow(() -> new RuntimeException());
         Booking booking = bookingMapper.toEntity(bookingRequestDTO);
-        booking.setId(id);
-        return bookingMapper.toDTO(bookingRepository.save(booking));
+        booking1.setCustomerId(booking.getCustomerId());
+        booking1.setHotelId(booking.getHotelId());
+        booking1.setRoomId(booking.getRoomId());
+        booking1.setStartDate(booking.getStartDate());
+        booking1.setEndDate(booking.getEndDate());
+        return bookingMapper.toDTO(bookingRepository.save(booking1));
     }
 
     public void deleteBooking(UUID id) {
