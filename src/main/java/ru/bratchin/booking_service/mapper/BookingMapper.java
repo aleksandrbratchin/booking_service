@@ -22,6 +22,7 @@ public abstract class BookingMapper {
 
     public abstract Booking toEntity(BookingRequestDTO bookingDTO);
 
+    @Mapping(target = "id", ignore = true)
     public abstract Booking toEntity(BookingCreateDTO bookingDTO);
 
 }

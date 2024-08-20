@@ -50,7 +50,7 @@ public class BookingService {
     }
 
     public BookingResponseDTO updateBooking(UUID id, BookingRequestDTO bookingRequestDTO) {
-        Booking booking1 = bookingRepository.findById(id).orElseThrow(() -> new RuntimeException());
+        Booking booking1 = bookingRepository.findById(id).orElseThrow(RuntimeException::new);
         Booking booking = bookingMapper.toEntity(bookingRequestDTO);
         booking1.setCustomerId(booking.getCustomerId());
         booking1.setHotelId(booking.getHotelId());
