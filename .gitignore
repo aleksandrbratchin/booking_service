@@ -34,3 +34,6 @@ build/
 /.mvn/
 /mvnw
 /mvnw.cmd
+/src/main/resources/booking-prod.yml
+/src/main/resources/booking-dev.yml
+/docker-compose.dev.yml

@@ -1,0 +1,45 @@
+version: '3.5'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-booking
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8081:8081"
+    restart: no
+    depends_on:
+      - db-booking
+    networks:
+      - internet
+      - appnet
+
+  db-booking:
+    image: postgres:16-alpine
+    container_name: db-booking
+    environment:
+      POSTGRES_DB: booking
+      POSTGRES_USER: userok
+      POSTGRES_PASSWORD: password
+      PGPORT: 5434
+    ports:
+      - "5434:5434"
+    volumes:
+      - booking_db:/var/lib/postgresql/data
+    restart: no
+    networks:
+      - appnet
+
+volumes:
+  booking_db:
+
+networks:
+  internet:
+    name: internet
+    driver: bridge
+  appnet:
+    name: appnet
+    driver: bridge
